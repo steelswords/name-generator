@@ -1,10 +1,11 @@
 #include "TextGenerationGrammar.hpp"
 #include <stdexcept>
 #include <exception>
+#include <random>
 
 #define MAX_LINE_LENGTH_IN_CHARS 1024
 
-#define DEBUG 1
+#define DEBUG 0
 
 // Returns true if 'input' starts with 'prefix'
 // Ignores whitespace at the beginning of 'input'
@@ -33,6 +34,19 @@ bool startsWith(std::string input, std::string prefix)
 bool isWhitespace(char c)
 {
   return c == ' ' || c == '\t';
+}
+
+std::vector<std::string> &TextToken::choosePossibility()
+{
+  std::random_device randomDevice;
+  std::mt19937 randomEngine(randomDevice());
+  std::uniform_int_distribution<std::vector<std::string>::size_type>
+    distribution(0, this->contents.size() - 1);
+  auto possibilityIndex = distribution(randomEngine);
+#if DEBUG
+  std::cout << "Choosing possibility " << possibilityIndex << " of " << contents.size() << std::endl;
+#endif
+  return contents[possibilityIndex];
 }
 
 std::vector<std::string> TextToken::splitLineIntoWords(std::string line)
@@ -141,4 +155,48 @@ TextGenerationGrammar::TextGenerationGrammar(std::string fileName)
       // For each line until we reach a new token definition, add this possibility to this token's contents
     lineNumber++;
   }
+  // Store the last worked on token
+  tokens[tokenName] = std::shared_ptr<TextToken>(inProgressTextToken);
+}
+
+// Returns true if 'word' is an expandable token, and gives indices pointing to leftBracket and rightBracket.
+bool isExpandableToken(std::string word, size_t &leftBracketPos, size_t &rightBracketPos)
+{
+  leftBracketPos = word.find("<");
+  rightBracketPos = word.find(">");
+  // Does this word contain '<' and '>'? Does '<' come before '>'?
+  return ((leftBracketPos != std::string::npos && rightBracketPos != std::string::npos) && (leftBracketPos < rightBracketPos));
+}
+
+std::string TextGenerationGrammar::generate(std::string tokenName)
+{
+#if DEBUG
+  std::cout << "- Generating " << tokenName << std::endl;
+#endif
+  std::string result = "";
+  // First, choose a possibility
+  std::vector<std::string> &possibility = tokens[tokenName]->choosePossibility();
+
+  // Iterate over possibility, recursively substituting <tokens>.
+  for (std::string word : possibility)
+  {
+    size_t leftBracketPos, rightBracketPos;
+    if (isExpandableToken(word, leftBracketPos, rightBracketPos))
+    {
+      std::string tokenNameWithoutBrackets = word.substr(leftBracketPos + 1,
+          rightBracketPos-2);
+      std::string prefix = word.substr(0, leftBracketPos);
+      std::string suffix = word.substr(rightBracketPos+1, (word.size() - (rightBracketPos +1 ) ));
+#if DEBUG
+      std::cout << "prefix = '" << prefix << "', token = '" << tokenNameWithoutBrackets << "', suffix = '" << suffix << "'" << std::endl;
+#endif
+      result += prefix + generate(tokenNameWithoutBrackets) + suffix;
+    }
+    else
+    {
+      result += word;
+    }
+  }
+  // Return
+  return result;
 }

@@ -18,7 +18,6 @@ class TextGenerationGrammar
 {
 public:
   TextGenerationGrammar(std::string fileName);
-  TextToken getToken(std::string tokenName);
 
   std::string generate() { return generate("MAIN"); }
   std::string generate(std::string tokenName);

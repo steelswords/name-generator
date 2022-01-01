@@ -1,0 +1,38 @@
+[MAIN]
+The <Adjective> <Beast>
+The <Number> <Beast>s
+Taste Of <Place>
+The <Beast>'s Head
+The <Beast>'s Tail
+# <Name>'s
+
+[Adjective]
+Red
+Green
+
+[Beast]
+Dragon
+Manticore
+Goat
+Stag
+Fox
+
+[Number]
+Lone
+Two
+Three
+Twelve
+
+[Place]
+Arrakis
+Dor
+Brightthorn
+Melian
+
+[Name]
+O'Callaghan
+Barry
+Draxer
+Dexter
+Aelfred
+Mother Rieley
