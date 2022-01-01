@@ -42,11 +42,12 @@ std::vector<std::string> TextToken::splitLineIntoWords(std::string line)
   auto lineIter = line.begin();
   while (isWhitespace(*lineIter)) lineIter++;
   auto beginningOfWord = lineIter;
-  for (; lineIter < line.end(); lineIter++)
+  for (; lineIter <= line.end(); lineIter++)
   {
     // If we have found whitespace, we found the end of a word.
+    // Also, if it is the last thing, we have found a word.
     // Add word to vector
-    if (isWhitespace(*lineIter))
+    if (isWhitespace(*lineIter) || (lineIter == line.end()))
     {
       std::string word;
       for (; beginningOfWord < lineIter; beginningOfWord++)
