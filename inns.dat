@@ -2,20 +2,60 @@
 The <Adjective> <Beast>
 The <Number> <Beast>s
 Taste Of <Place>
-The <Beast>'s Head
-The <Beast>'s Tail
+The <Beast>'s <BodyPart>
+The <Noun> and <Noun>
 <Name>'s
 
 [Adjective]
 Red
 Green
+Jumping
+Sleeping
 
 [Beast]
 Dragon
+Lion
 Manticore
 Goat
 Stag
 Fox
+Boar
+Unicorn
+Minotaur
+Blemmyae
+Skiapod
+Rooster
+Giant
+Grendel
+Mermaid
+Leprechaun
+Ant
+Phoenix
+Serpent
+Centaur
+Ogre
+Fae
+
+[Noun]
+Cup
+Stone
+Hearth
+Flagon
+Glass
+Table
+Barrel
+Board
+Bath
+Whistle
+
+
+[BodyPart]
+Tail
+Eye
+Head
+Claw
+Belly
+Pelt
 
 [Number]
 Lone
@@ -35,4 +75,5 @@ Barry
 Draxer
 Dexter
 Aelfred
+Wulfric
 Mother Rieley
