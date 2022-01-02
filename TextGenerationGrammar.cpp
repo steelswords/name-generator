@@ -73,6 +73,7 @@ std::vector<std::string> TextToken::splitLineIntoWords(std::string line)
       std::cout << "Found word '" << word << "'" << std::endl;
 #endif
     }
+    while (isWhitespace(*lineIter)) lineIter++;
   }
   return result;
 }
@@ -98,7 +99,7 @@ TextGenerationGrammar::TextGenerationGrammar(std::string fileName)
   while (file.getline(buffer, MAX_LINE_LENGTH_IN_CHARS))
   {
     std::string line(buffer);
-#ifdef DEBUG
+#if DEBUG
     std::cout << "Parsing line '" << line << "'" << std::endl;
 #endif
     // Do something based on type
@@ -129,7 +130,9 @@ TextGenerationGrammar::TextGenerationGrammar(std::string fileName)
       }
       // +1 to beginning and -1 to end to take off the [ and ] characters
       tokenName = line.substr(line.find('[') + 1, endingBracketPosition - 1);
+#if DEBUG
       std::cout << "Found new token: " << tokenName << std::endl;
+#endif
 
     }
     // If the line doesn't start with anything, it's likely contents
@@ -184,7 +187,7 @@ std::string TextGenerationGrammar::generate(std::string tokenName)
     if (isExpandableToken(word, leftBracketPos, rightBracketPos))
     {
       std::string tokenNameWithoutBrackets = word.substr(leftBracketPos + 1,
-          rightBracketPos-2);
+          rightBracketPos - leftBracketPos - 1);
       std::string prefix = word.substr(0, leftBracketPos);
       std::string suffix = word.substr(rightBracketPos+1, (word.size() - (rightBracketPos +1 ) ));
 #if DEBUG
