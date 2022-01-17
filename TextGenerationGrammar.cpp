@@ -162,6 +162,8 @@ TextGenerationGrammar::TextGenerationGrammar(std::string fileName)
   tokens[tokenName] = std::shared_ptr<TextToken>(inProgressTextToken);
 }
 
+// TODO: At some point, I would love to see all this token stuff taken up by
+// lex and bison.
 // Returns true if 'word' is an expandable token, and gives indices pointing to leftBracket and rightBracket.
 bool isExpandableToken(std::string word, size_t &leftBracketPos, size_t &rightBracketPos)
 {
@@ -169,6 +171,60 @@ bool isExpandableToken(std::string word, size_t &leftBracketPos, size_t &rightBr
   rightBracketPos = word.find(">");
   // Does this word contain '<' and '>'? Does '<' come before '>'?
   return ((leftBracketPos != std::string::npos && rightBracketPos != std::string::npos) && (leftBracketPos < rightBracketPos));
+}
+
+bool TextGenerationGrammar::hasReferenceName(std::string tokenText, std::string &tokenName, std::string &referenceName)
+{
+  bool result = false;
+  tokenName = tokenText;
+  referenceName = "";
+  size_t dollarSignPos = tokenText.find("$");
+  if (dollarSignPos != std::string::npos)
+  {
+    result = true;
+    referenceName = tokenText.substr(dollarSignPos + 1, std::string::npos);
+    tokenName = tokenText.substr(0, dollarSignPos);
+#if DEBUG
+    std::cout << "Reference name = " << referenceName << std::endl;
+#endif
+  }
+  return result;
+}
+
+std::string TextGenerationGrammar::expandWordIfToken(std::string word)
+{
+  // TODO: Clean up this mess
+  std::string result = "";
+  size_t leftBracketPos, rightBracketPos;
+  if (isExpandableToken(word, leftBracketPos, rightBracketPos))
+  {
+    std::string tokenNameWithoutBrackets = word.substr(leftBracketPos + 1,
+        rightBracketPos - leftBracketPos - 1);
+    std::string prefix = word.substr(0, leftBracketPos);
+    std::string suffix = word.substr(rightBracketPos+1, (word.size() - (rightBracketPos +1 ) ));
+#if DEBUG
+    std::cout << "prefix = '" << prefix << "', token = '" << tokenNameWithoutBrackets << "', suffix = '" << suffix << "'" << std::endl;
+#endif
+    std::string tokenName, referenceName;
+    if (hasReferenceName(tokenNameWithoutBrackets, tokenName, referenceName))
+    {
+      // Use the already-generated name if it exists. Otherwise, generate it.
+      if (!namedTokens.contains(referenceName))
+      {
+        namedTokens[referenceName] = generate(tokenName);
+      }
+      result += prefix + namedTokens[referenceName] + suffix;
+    }
+    else
+    {
+      result += prefix + generate(tokenNameWithoutBrackets) + suffix;
+    }
+  }
+  else
+  {
+    result += word;
+  }
+  return result;
 }
 
 std::string TextGenerationGrammar::generate(std::string tokenName)
@@ -183,23 +239,13 @@ std::string TextGenerationGrammar::generate(std::string tokenName)
   // Iterate over possibility, recursively substituting <tokens>.
   for (std::string word : possibility)
   {
-    size_t leftBracketPos, rightBracketPos;
-    if (isExpandableToken(word, leftBracketPos, rightBracketPos))
-    {
-      std::string tokenNameWithoutBrackets = word.substr(leftBracketPos + 1,
-          rightBracketPos - leftBracketPos - 1);
-      std::string prefix = word.substr(0, leftBracketPos);
-      std::string suffix = word.substr(rightBracketPos+1, (word.size() - (rightBracketPos +1 ) ));
-#if DEBUG
-      std::cout << "prefix = '" << prefix << "', token = '" << tokenNameWithoutBrackets << "', suffix = '" << suffix << "'" << std::endl;
-#endif
-      result += prefix + generate(tokenNameWithoutBrackets) + suffix;
-    }
-    else
-    {
-      result += word;
-    }
+    result += expandWordIfToken(word);
   }
   // Return
   return result;
+}
+
+void TextGenerationGrammar::clearState()
+{
+  namedTokens.clear();
 }
