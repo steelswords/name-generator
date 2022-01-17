@@ -4,20 +4,18 @@
 
 int main()
 {
-  TextGenerationGrammar generator("backstory.dat");
+  TextGenerationGrammar generator("inns.dat");
   std::cout << generator.generate() << std::endl;
+  std::cout << generator.generate() << std::endl;
+  std::cout << generator.generate() << std::endl;
+  std::cout << generator.generate() << std::endl;
+  std::cout << generator.generate() << std::endl;
+  std::cout << "-------------------------------" << std::endl;
   generator.clearState();
   std::cout << generator.generate() << std::endl;
-  generator.clearState();
   std::cout << generator.generate() << std::endl;
-  generator.clearState();
   std::cout << generator.generate() << std::endl;
-  generator.clearState();
   std::cout << generator.generate() << std::endl;
-  generator.clearState();
   std::cout << generator.generate() << std::endl;
-  generator.clearState();
-  std::cout << generator.generate() << std::endl;
-  generator.clearState();
   return 0;
 }

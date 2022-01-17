@@ -1,12 +1,49 @@
 [MAIN]
-<Name> grew up in <Place$home>. <Place$home> was nice.
+<Name$name> grew up in <Place$home>. <Place$home> was nice. Every <Season$favoriteTime> <$name> would go to the <FunPlace$favoritePlace>
+<Name$name>'s dream was always to have a <FunPlace$dreamPlace> of their own. As a little tyke, <$name> would dream of starting small and then growing into the best <$dreamPlace> the people of <Place$home> had ever seen. People from all around would flock to see <$name>'s <$dreamPlace>.
+<Name$name>'s best friend growing up was named <Name$friend>. <$friend> wanted to be a <Career$friendCareer> more than anything.
 
 [Name]
 Sally
 Jimmy
+Bobby
+Miguel
+Azania
+Petunia
+Lily
+Harry
+George
+Braxton
 
 [Place]
 Rosamond
 Lancaser
 Nevada
 Greenland
+
+[Career]
+firefighter
+police officer
+doctor
+nurse
+psychiatrist
+engineer
+programmer
+YouTube star
+
+
+[FunPlace]
+Zoo
+Aquarium
+Ballet
+Arcade
+Movie Theatre
+Wharf
+Beach
+Ice cream shop
+
+[Season]
+winter
+fall
+spring
+summer
